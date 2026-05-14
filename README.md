@@ -20,6 +20,7 @@ Los ejemplos usan placeholders como `<PUBLIC_IP>`, `<SERVER_LAN_IP>`, `<PORTAL_D
 7. [Configurar clientes](#configurar-clientes)
 8. [Comandos de administracion](#comandos-de-administracion)
 9. [Problemas comunes](#problemas-comunes)
+10. [Creditos](#creditos)
 
 ## Como elegir el modo
 
@@ -474,3 +475,13 @@ Si ahi aparecen jugadores pero la web muestra cero, el problema esta en el rever
 ### El partido se juega pero no queda en la base
 
 Puede pasar si alguien cierra o corta antes de que PES6 mande el resultado final. Para probar stats, terminar el partido y volver al lobby normalmente antes de cerrar.
+
+## Creditos
+
+El servidor base no es parte de este repo. `fiveserver/sixserver` fue creado por Juce y colaboradores:
+
+```text
+https://github.com/juce/fiveserver
+```
+
+Este repo solamente documenta una forma de desplegarlo con Docker, STUN y reglas de red para jugar PES6 por VPN o por Internet.
