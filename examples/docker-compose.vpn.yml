@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: <DB_ROOT_PASSWORD>
+      MARIADB_DATABASE: sixserver
+      MARIADB_USER: sixserver
+      MARIADB_PASSWORD: <DB_PASSWORD>
+    volumes:
+      - sixserver-db:/var/lib/mysql
+      - ./sql/schema6.sql:/docker-entrypoint-initdb.d/01-schema6.sql:ro
+    ports:
+      - "127.0.0.1:33066:3306"
+
+  sixserver:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      SVC: sixserver
+    volumes:
+      - ./etc:/opt/fiveserver/etc
+      - ./log:/opt/fiveserver/log
+
+volumes:
+  sixserver-db:
+

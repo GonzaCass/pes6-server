@@ -1,0 +1,6 @@
+# Run Notepad as Administrator and edit:
+# C:\Windows\System32\drivers\etc\hosts
+
+<PUBLIC_IP_OR_VPN_IP> pes6gate-ec.winning-eleven.net
+<PUBLIC_IP_OR_VPN_IP> we9stun.winning-eleven.net
+

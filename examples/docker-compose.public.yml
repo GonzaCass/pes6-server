@@ -1,0 +1,80 @@
+services:
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: <DB_ROOT_PASSWORD>
+      MARIADB_DATABASE: sixserver
+      MARIADB_USER: sixserver
+      MARIADB_PASSWORD: <DB_PASSWORD>
+    volumes:
+      - sixserver-db:/var/lib/mysql
+      - ./sql/schema6.sql:/docker-entrypoint-initdb.d/01-schema6.sql:ro
+    ports:
+      - "127.0.0.1:33066:3306"
+
+  sixserver:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      SVC: sixserver
+    volumes:
+      - ./etc:/opt/fiveserver/etc
+      - ./log:/opt/fiveserver/log
+
+  stun:
+    build:
+      context: ./stund
+      dockerfile: Dockerfile
+      args:
+        STUN_PUBLIC_IP: <PUBLIC_IP>
+        STUN_PRIMARY_IP: <SERVER_LAN_IP>
+        STUN_ALT_IP: <SERVER_LAN_ALT_IP>
+    network_mode: host
+    restart: unless-stopped
+
+  portal:
+    image: alpine/socat:latest
+    command: tcp-listen:8080,fork,reuseaddr tcp:host.docker.internal:8190
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - traefik-net
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pes6-portal.rule=Host(`<PORTAL_DOMAIN>`)"
+      - "traefik.http.routers.pes6-portal.entrypoints=websecure"
+      - "traefik.http.routers.pes6-portal.tls=true"
+      - "traefik.http.services.pes6-portal.loadbalancer.server.port=8080"
+
+  public-api:
+    image: alpine/socat:latest
+    command: tcp-listen:8080,fork,reuseaddr tcp:host.docker.internal:8192
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - traefik-net
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pes6-public-api.rule=Host(`<PORTAL_DOMAIN>`) && PathPrefix(`/public`)"
+      - "traefik.http.routers.pes6-public-api.entrypoints=websecure"
+      - "traefik.http.routers.pes6-public-api.tls=true"
+      - "traefik.http.routers.pes6-public-api.priority=100"
+      - "traefik.http.routers.pes6-public-api.middlewares=pes6-public-api-strip"
+      - "traefik.http.middlewares.pes6-public-api-strip.stripprefix.prefixes=/public"
+      - "traefik.http.services.pes6-public-api.loadbalancer.server.port=8080"
+
+networks:
+  traefik-net:
+    external: true
+
+volumes:
+  sixserver-db:
+
