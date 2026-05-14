@@ -1,0 +1,33 @@
+--- stun.cxx.orig
++++ stun.cxx
+@@ -1570,6 +1570,30 @@
+          if ( verbose ) clog << "Failed to parse message" << endl;
+          return true;
+       }
++
++      const char* advertisedIp = getenv("STUN_PUBLIC_IP");
++      if ( advertisedIp && advertisedIp[0] )
++      {
++         StunAddress4 advertised;
++         advertised.addr = 0;
++         advertised.port = 0;
++         char advertisedName[256];
++         strncpy(advertisedName, advertisedIp, sizeof(advertisedName) - 1);
++         advertisedName[sizeof(advertisedName) - 1] = '\0';
++         stunParseServerName(advertisedName, advertised);
++
++         if ( advertised.addr != 0 )
++         {
++            if ( resp.hasSourceAddress )
++            {
++               resp.sourceAddress.ipv4.addr = advertised.addr;
++            }
++            if ( resp.hasChangedAddress )
++            {
++               resp.changedAddress.ipv4.addr = advertised.addr;
++            }
++         }
++      }
+ 		
+       char buf[STUN_MAX_MESSAGE_SIZE];
+       int len = sizeof(buf);

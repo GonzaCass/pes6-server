@@ -29,7 +29,7 @@ services:
 
   stun:
     build:
-      context: ./stund
+      context: ./examples/stund
       dockerfile: Dockerfile
       args:
         STUN_PUBLIC_IP: <PUBLIC_IP>
@@ -77,4 +77,3 @@ networks:
 
 volumes:
   sixserver-db:
-

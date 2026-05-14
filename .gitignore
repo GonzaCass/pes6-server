@@ -3,9 +3,8 @@
 *.pid
 data/
 mysql/
-fiveserver/
-stund/
+/fiveserver/
+/stund/
 stund.tgz
 *.tar.gz
 *.zip
-
