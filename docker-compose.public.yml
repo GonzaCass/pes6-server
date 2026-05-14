@@ -29,7 +29,7 @@ services:
 
   stun:
     build:
-      context: ./examples/stund
+      context: ./stund
       dockerfile: Dockerfile
       args:
         STUN_PUBLIC_IP: <PUBLIC_IP>

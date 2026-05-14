@@ -78,20 +78,20 @@ docker --version
 docker compose version
 ```
 
-Copia los ejemplos que vayas a usar dentro del repo `fiveserver`:
+Copia los templates que vayas a usar dentro del repo `fiveserver`:
 
 ```bash
 # desde este repo de guia
-cp examples/sixserver.yaml ~/pes6-server/fiveserver/etc/conf/sixserver.yaml
-cp examples/docker-compose.public.yml ~/pes6-server/fiveserver/docker-compose.yml
-cp -r examples/stund ~/pes6-server/fiveserver/examples/
+cp sixserver.yaml ~/pes6-server/fiveserver/etc/conf/sixserver.yaml
+cp docker-compose.public.yml ~/pes6-server/fiveserver/docker-compose.yml
+cp -r stund ~/pes6-server/fiveserver/
 ```
 
 Edita los placeholders:
 
 ```bash
 cd ~/pes6-server/fiveserver
-grep -R "<.*>" -n docker-compose.yml etc/conf/sixserver.yaml examples/stund || true
+grep -R "<.*>" -n docker-compose.yml etc/conf/sixserver.yaml stund || true
 ```
 
 Reemplaza como minimo:
@@ -121,7 +121,7 @@ ServerIP: <SERVER_VPN_IP>
 5. Usa el compose simple:
 
 ```bash
-cp examples/docker-compose.vpn.yml docker-compose.yml
+cp docker-compose.vpn.yml docker-compose.yml
 docker compose up -d --build
 docker compose ps
 ```
@@ -153,7 +153,7 @@ En `etc/conf/sixserver.yaml`:
 ServerIP: <PUBLIC_IP>
 ```
 
-El archivo de ejemplo esta en [examples/sixserver.yaml](examples/sixserver.yaml).
+El archivo de ejemplo esta en [sixserver.yaml](sixserver.yaml).
 
 ### 2. Preparar IP secundaria para STUN
 
@@ -178,7 +178,7 @@ ip addr show
 
 ### 3. Construir STUN
 
-El Dockerfile de ejemplo esta en [examples/stund/Dockerfile](examples/stund/Dockerfile).
+El Dockerfile de ejemplo esta en [stund/Dockerfile](stund/Dockerfile).
 
 Ese Dockerfile descarga `stund_0.96_Aug13.tgz` desde SourceForge, lo compila y aplica un patch para que el servidor anuncie la IP publica con `STUN_PUBLIC_IP`.
 
@@ -187,12 +187,10 @@ La fuente original historica figura como Vovida STUN 0.96. FreeBSD mantiene el p
 Comandos:
 
 ```bash
-mkdir -p examples
-cp -r /ruta/a/este/repo/examples/stund ./examples/stund
 docker build \
   --build-arg STUND_URL="https://downloads.sourceforge.net/project/stun/stun/0.96/stund_0.96_Aug13.tgz" \
   -t pes6-stund:0.96 \
-  ./examples/stund
+  ./stund
 ```
 
 Proba que la imagen exista:
@@ -206,7 +204,7 @@ docker image ls pes6-stund
 Usa el compose publico:
 
 ```bash
-cp examples/docker-compose.public.yml docker-compose.yml
+cp docker-compose.public.yml docker-compose.yml
 ```
 
 Edita `docker-compose.yml` y reemplaza placeholders. Despues:
@@ -228,7 +226,7 @@ docker compose logs -f stun
 Ejemplo con UFW:
 
 ```bash
-cp examples/ufw-public.sh /tmp/ufw-pes6.sh
+cp ufw-public.sh /tmp/ufw-pes6.sh
 sed -i 's/<TRAEFIK_DOCKER_SUBNET>/172.19.0.0\/16/g' /tmp/ufw-pes6.sh
 sudo sh /tmp/ufw-pes6.sh
 sudo ufw status numbered
@@ -251,7 +249,7 @@ Si jugas desde la misma LAN:
 UDP 5739 -> <GAME_PC_LAN_IP>
 ```
 
-Para MikroTik hay una plantilla en [examples/mikrotik-pes6.rsc](examples/mikrotik-pes6.rsc). Edita las variables antes de aplicarla:
+Para MikroTik hay una plantilla en [mikrotik-pes6.rsc](mikrotik-pes6.rsc). Edita las variables antes de aplicarla:
 
 ```routeros
 :global PublicIP "<PUBLIC_IP>"

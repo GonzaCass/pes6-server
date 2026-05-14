@@ -4,7 +4,6 @@
 data/
 mysql/
 /fiveserver/
-/stund/
 stund.tgz
 *.tar.gz
 *.zip
